@@ -1,9 +1,12 @@
 <script lang="ts" setup>
-import TodoItem from "./TodoItem.vue";
+import { computed } from "vue";
 import { useTodosStore } from "../stores/todosStore";
+import TodoItem from "./TodoItem.vue";
 import type { Todo } from "../types";
 
 const todosStore = useTodosStore();
+
+const isActiveToggleAllTodos = computed(() => !!todosStore.activeTodos.length);
 
 function handleChangeTodo(todo: Todo) {
   todosStore.editTodo(todo);
@@ -13,9 +16,8 @@ function handleDeleteTodo(todo: Todo) {
   todosStore.deleteTodo(todo);
 }
 
-function handleToggleAllTodos(event: Event) {
-  const target = event.target as HTMLInputElement;
-  todosStore.editAllTodosStatus(target.checked);
+function handleToggleAllTodos() {
+  todosStore.editAllTodosStatus(isActiveToggleAllTodos.value);
 }
 </script>
 
@@ -26,6 +28,7 @@ function handleToggleAllTodos(event: Event) {
       class="toggle-all"
       type="checkbox"
       @change="handleToggleAllTodos"
+      :checked="!isActiveToggleAllTodos"
     />
     <label for="toggle-all">Mark all as complete</label>
     <ul class="todo-list">
